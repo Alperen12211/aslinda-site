@@ -1,5 +1,7 @@
 ﻿(function () {
-  var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
+  // Many Windows PCs report reduced motion just because "animation effects" is off; CSS already
+  // swaps movement for plain fades there, so the page still plays its clips and reveals.
+  var reduce = false;
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   var root = document.documentElement;
@@ -125,10 +127,25 @@
   }
 
   // ---- in-page links: smooth glide (CSS) + a light arrival cue on the target heading
+  // eased glide in JS: Windows' "animation effects off" makes browsers skip CSS smooth scrolling
+  function glide(t) {
+    var y0 = scrollY, y1 = Math.max(0, t.getBoundingClientRect().top + scrollY - (parseFloat(getComputedStyle(t).scrollMarginTop) || 0));
+    var d = y1 - y0, dur = Math.min(1100, 450 + Math.abs(d) * 0.25), t0 = null;
+    root.style.scrollBehavior = "auto";
+    function step() {
+      var ts = performance.now();
+      if (t0 === null) t0 = ts;
+      var p = Math.min((ts - t0) / dur, 1), e = p < .5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2;
+      scrollTo(0, y0 + d * e);
+      if (p < 1) setTimeout(step, 16); else { root.style.scrollBehavior = ""; dispatchEvent(new Event("scrollend")); }
+    }
+    step();
+  }
   $$('a[href^="#"]').forEach(function (a) {
-    a.addEventListener("click", function () {
+    a.addEventListener("click", function (ev) {
       var id = a.getAttribute("href").slice(1), t = id && document.getElementById(id);
       if (!t) return;
+      ev.preventDefault(); history.replaceState(null, "", "#" + id); glide(t);
       var h = $("h2", t);
       if (!h) return;
       var fired = false; function cue() { if (fired) return; fired = true; h.classList.remove("arrive"); void h.offsetWidth; h.classList.add("arrive"); removeEventListener("scrollend", cue); }
