@@ -1,6 +1,5 @@
-(function () {
+﻿(function () {
   var reduce = window.matchMedia && matchMedia("(prefers-reduced-motion: reduce)").matches;
-  var fine = window.matchMedia && matchMedia("(hover: hover) and (pointer: fine)").matches;
   var $ = function (s, r) { return (r || document).querySelector(s); };
   var $$ = function (s, r) { return Array.prototype.slice.call((r || document).querySelectorAll(s)); };
   var root = document.documentElement;
@@ -26,39 +25,61 @@
   });
   if (!reduce) root.classList.add("js");
 
-  // ---- style showcase
+  // ---- karaoke highlight: the active word of the headline moves along, like the captions in the videos
+  var kw = $$("h1 .w");
+  if (!reduce && kw.length) {
+    var ki = -1, kn = 0;
+    setTimeout(function () {
+      var kt = setInterval(function () {
+        if (kw[ki]) kw[ki].classList.remove("on");
+        ki = (ki + 1) % (kw.length + 1);
+        if (kw[ki]) kw[ki].classList.add("on");
+        if (++kn > kw.length * 3 + 3) { clearInterval(kt); if (kw[ki]) kw[ki].classList.remove("on"); }
+      }, 700);
+    }, 1800);
+  }
+
+  // ---- style showcase (the clips are the product's own output)
   var clips = {
-    belgesel: ["medya/belgesel.mp4", "medya/belgesel.jpg", "Belgesel tarzı: gerçek görsellerle."],
-    cizim: ["medya/cizim.mp4", "medya/cizim.jpg", "Çizim tarzı: çizgi karakterlerle."],
-    karma: ["medya/karma.mp4", "medya/karma.jpg", "Karma tarzı: hızlı şablon sahneler."],
-    motion: ["medya/motion.mp4", "medya/motion.jpg", "Motion tarzı: kinetik yazı ve efektler."]
+    belgesel: ["medya/belgesel.mp4", "medya/belgesel.jpg", "Belgesel tarzı: gerçek görsellerle.", "Belgesel tarzı örnek video"],
+    cizim: ["medya/cizim.mp4", "medya/cizim.jpg", "Çizim tarzı: çizgi karakterlerle.", "Çizim tarzı örnek video"],
+    karma: ["medya/karma.mp4", "medya/karma.jpg", "Karma tarzı: hızlı şablon sahneler.", "Karma tarzı örnek video"],
+    motion: ["medya/motion.mp4", "medya/motion.jpg", "Motion tarzı: kinetik yazı ve efektler.", "Motion tarzı örnek video"]
   };
   var stage = $("#stage"), cap = $("#cap");
   var tabs = $$(".styles button");
   var first = true;
 
   function show(k) {
-    tabs.forEach(function (b) { b.setAttribute("aria-selected", b.dataset.k === k ? "true" : "false"); });
-    var c = clips[k];
-    if (!first && !reduce) { stage.classList.remove("swap"); void stage.offsetWidth; stage.classList.add("swap"); }
+    tabs.forEach(function (b) { var on = b.dataset.k === k; b.setAttribute("aria-selected", on ? "true" : "false"); b.tabIndex = on ? 0 : -1; });
+    var c = clips[k], inner;
+    if (c) inner = '<video muted loop playsinline preload="metadata" poster="' + c[1] + '" aria-label="' + c[3] + '"><source src="' + c[0] + '" type="video/mp4"></video>';
+    else inner = '<div class="bos"><span class="q" aria-hidden="true">?</span><p>Bu tarzın örnek videosu yakında eklenecek.</p></div>';
+    stage.innerHTML = '<figure class="ph' + (!first && !reduce ? " swap" : "") + '"><div class="vid">' + inner + '</div></figure>';
     first = false;
-    if (!c) {
-      stage.innerHTML = '<div class="empty">Bu tarzın örnek videosu yakında eklenecek.</div>';
-      cap.textContent = "Arayüz tarzı: telefon ekranı kartları.";
-      return;
+    cap.textContent = c ? c[2] : "Arayüz tarzı: telefon ekranı kartları.";
+    var v = $("video", stage);
+    if (v) {
+      if (!reduce) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
+      else v.controls = true;
     }
-    stage.innerHTML = '<video muted loop playsinline preload="metadata" poster="' + c[1] + '"><source src="' + c[0] + '" type="video/mp4"></video>';
-    cap.textContent = c[2];
-    var v = stage.firstChild;
-    if (!reduce) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
-    else v.controls = true;
   }
   tabs.forEach(function (b) { b.addEventListener("click", function () { show(b.dataset.k); }); });
   show("belgesel");
 
+  // ---- arrow keys move between style tabs
+  tabs.forEach(function (b, i) {
+    b.addEventListener("keydown", function (e) {
+      var n = e.key === "ArrowDown" || e.key === "ArrowRight" ? i + 1 : e.key === "ArrowUp" || e.key === "ArrowLeft" ? i - 1 : null;
+      if (n === null) return;
+      e.preventDefault();
+      var t = tabs[(n + tabs.length) % tabs.length]; t.focus(); t.click();
+    });
+  });
+
   if (reduce) return; // everything below is motion
 
-  // ---- play videos only while visible; pause decorative loops when their section is off screen
+  // ---- play hero videos only while visible
   var vids = $$("video[data-autoplay]");
   if ("IntersectionObserver" in window) {
     var vio = new IntersectionObserver(function (es) {
@@ -68,15 +89,13 @@
       });
     }, { threshold: 0.25 });
     vids.forEach(function (v) { vio.observe(v); });
-
-    var pio = new IntersectionObserver(function (es) {
-      es.forEach(function (e) { e.target.classList.toggle("paused", !e.isIntersecting); });
-    }, { rootMargin: "80px" });
-    $$(".hero, .ribbon, #indir, .plan.best").forEach(function (s) { pio.observe(s); });
+    var sio = new IntersectionObserver(function (es) {
+      es.forEach(function (e) { var v = $("video", e.target); if (!v) return; if (e.isIntersecting) { var p = v.play(); if (p && p.catch) p.catch(function () {}); } else v.pause(); });
+    }, { threshold: 0.2 });
+    sio.observe($(".stage"));
   }
 
   // ---- scroll reveals + price counters
-  var rvSel = ".rv, .rv-l, .rv-s, .rv-h";
   function fmt(n) { return n.toLocaleString("tr-TR"); }
   function count(el) {
     var to = +el.dataset.to, t0 = null, dur = 1100;
@@ -93,19 +112,29 @@
   function reveal(el) {
     el.classList.add("in");
     $$(".num", el).forEach(count);
-    // once settled, drop reveal classes so hover/tilt transitions on cards are not overridden
-    setTimeout(function () { el.classList.remove("rv", "rv-l", "rv-s", "rv-h", "in"); }, 1500);
+    if (!el.classList.contains("tile")) setTimeout(function () { el.classList.remove("rv", "in"); }, 1800);
   }
+  var targets = $$(".rv");
   if ("IntersectionObserver" in window) {
     var rio = new IntersectionObserver(function (es) {
-      es.forEach(function (e) {
-        if (e.isIntersecting) { reveal(e.target); rio.unobserve(e.target); }
-      });
+      es.forEach(function (e) { if (e.isIntersecting) { reveal(e.target); rio.unobserve(e.target); } });
     }, { threshold: 0.12, rootMargin: "0px 0px -6% 0px" });
-    $$(rvSel).forEach(function (el) { rio.observe(el); });
+    targets.forEach(function (el) { rio.observe(el); });
   } else {
-    $$(rvSel).forEach(function (el) { el.classList.remove("rv", "rv-l", "rv-s", "rv-h"); });
+    targets.forEach(function (el) { el.classList.remove("rv"); el.classList.add("in"); });
   }
+
+  // ---- in-page links: smooth glide (CSS) + a light arrival cue on the target heading
+  $$('a[href^="#"]').forEach(function (a) {
+    a.addEventListener("click", function () {
+      var id = a.getAttribute("href").slice(1), t = id && document.getElementById(id);
+      if (!t) return;
+      var h = $("h2", t);
+      if (!h) return;
+      var fired = false; function cue() { if (fired) return; fired = true; h.classList.remove("arrive"); void h.offsetWidth; h.classList.add("arrive"); removeEventListener("scrollend", cue); }
+      if ("onscrollend" in window) { addEventListener("scrollend", cue, { once: true }); setTimeout(cue, 1600); } else setTimeout(cue, 900);
+    });
+  });
 
   // ---- scroll progress bar
   var prog = $("#prog"), ticking = false;
@@ -116,43 +145,6 @@
   }
   addEventListener("scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
   onScroll();
-
-  if (!fine) return; // pointer effects only with a real mouse
-
-  // ---- hero parallax: eased toward the pointer
-  var hero = $(".hero"), fan = $("#fan"), orbs = $$(".orb[data-par]", hero);
-  var tx = 0, ty = 0, cx = 0, cy = 0, raf = 0;
-  function loop() {
-    cx += (tx - cx) * 0.08; cy += (ty - cy) * 0.08;
-    fan.style.setProperty("--px", cx.toFixed(3));
-    fan.style.setProperty("--py", cy.toFixed(3));
-    orbs.forEach(function (o) { o.style.translate = (cx * o.dataset.par).toFixed(1) + "px " + (cy * o.dataset.par * 0.7).toFixed(1) + "px"; });
-    if (Math.abs(tx - cx) > 0.002 || Math.abs(ty - cy) > 0.002) raf = requestAnimationFrame(loop); else raf = 0;
-  }
-  hero.addEventListener("pointermove", function (e) {
-    var r = hero.getBoundingClientRect();
-    tx = ((e.clientX - r.left) / r.width - 0.5) * 2;
-    ty = ((e.clientY - r.top) / r.height - 0.5) * 2;
-    if (!raf) raf = requestAnimationFrame(loop);
-  });
-  hero.addEventListener("pointerleave", function () { tx = 0; ty = 0; if (!raf) raf = requestAnimationFrame(loop); });
-
-  // ---- cards: edge light follows the cursor, gentle tilt
-  $$(".card").forEach(function (c) {
-    var big = c.classList.contains("plan") || c.classList.contains("wide") || c.classList.contains("hi");
-    c.addEventListener("pointermove", function (e) {
-      var r = c.getBoundingClientRect(), x = e.clientX - r.left, y = e.clientY - r.top;
-      c.style.setProperty("--mx", x + "px");
-      c.style.setProperty("--my", y + "px");
-      c.classList.add("tilting");
-      var k = big ? 3 : 5;
-      c.style.setProperty("--ry", ((x / r.width - 0.5) * k).toFixed(2) + "deg");
-      c.style.setProperty("--rx", ((0.5 - y / r.height) * k).toFixed(2) + "deg");
-    });
-    c.addEventListener("pointerleave", function () {
-      c.classList.remove("tilting");
-      c.style.setProperty("--rx", "0deg"); c.style.setProperty("--ry", "0deg");
-      c.style.setProperty("--mx", "-400px"); c.style.setProperty("--my", "-400px");
-    });
-  });
 })();
+
+
