@@ -25,6 +25,26 @@
       });
     })(h);
   });
+  // ---- scrub text: words fade in as the reader scrolls (Apple-style line-by-line reveal)
+  var scrubs = $$("[data-scrub]").map(function (el) {
+    var words = [];
+    (function walk(node) {
+      Array.prototype.slice.call(node.childNodes).forEach(function (n) {
+        if (n.nodeType === 3) {
+          var frag = document.createDocumentFragment();
+          n.textContent.split(/(\s+)/).forEach(function (t) {
+            if (!t) return;
+            if (/^\s+$/.test(t)) { frag.appendChild(document.createTextNode(" ")); return; }
+            var s = document.createElement("span");
+            s.className = "sw"; s.style.opacity = ".16"; s.textContent = t;
+            words.push(s); frag.appendChild(s);
+          });
+          node.replaceChild(frag, n);
+        } else if (n.nodeType === 1) walk(n);
+      });
+    })(el);
+    return { el: el, words: words };
+  });
   if (!reduce) root.classList.add("js");
 
   // ---- karaoke highlight: the active word of the headline moves along, like the captions in the videos
@@ -46,7 +66,8 @@
     belgesel: ["medya/belgesel.mp4", "medya/belgesel.jpg", "Belgesel tarzı: gerçek görsellerle.", "Belgesel tarzı örnek video"],
     cizim: ["medya/cizim.mp4", "medya/cizim.jpg", "Çizim tarzı: çizgi karakterlerle.", "Çizim tarzı örnek video"],
     karma: ["medya/karma.mp4", "medya/karma.jpg", "Karma tarzı: hızlı şablon sahneler.", "Karma tarzı örnek video"],
-    motion: ["medya/motion.mp4", "medya/motion.jpg", "Motion tarzı: kinetik yazı ve efektler.", "Motion tarzı örnek video"]
+    motion: ["medya/motion.mp4", "medya/motion.jpg", "Motion tarzı: kinetik yazı ve efektler.", "Motion tarzı örnek video"],
+    arayuz: ["medya/arayuz.mp4", "medya/arayuz.jpg", "Arayüz tarzı: telefon ekranı kartları.", "Arayüz tarzı örnek video"]
   };
   var stage = $("#stage"), cap = $("#cap");
   var tabs = $$(".styles button");
@@ -54,12 +75,11 @@
 
   function show(k) {
     tabs.forEach(function (b) { var on = b.dataset.k === k; b.setAttribute("aria-selected", on ? "true" : "false"); b.tabIndex = on ? 0 : -1; });
-    var c = clips[k], inner;
-    if (c) inner = '<video muted loop playsinline preload="metadata" poster="' + c[1] + '" aria-label="' + c[3] + '"><source src="' + c[0] + '" type="video/mp4"></video>';
-    else inner = '<div class="bos"><span class="q" aria-hidden="true">?</span><p>Bu tarzın örnek videosu yakında eklenecek.</p></div>';
+    var c = clips[k] || clips.belgesel;
+    var inner = '<video muted loop playsinline preload="metadata" poster="' + c[1] + '" aria-label="' + c[3] + '"><source src="' + c[0] + '" type="video/mp4"></video>';
     stage.innerHTML = '<figure class="ph' + (!first && !reduce ? " swap" : "") + '"><div class="vid">' + inner + '</div></figure>';
     first = false;
-    cap.textContent = c ? c[2] : "Arayüz tarzı: telefon ekranı kartları.";
+    cap.textContent = c[2];
     var v = $("video", stage);
     if (v) {
       if (!reduce) { var p = v.play(); if (p && p.catch) p.catch(function () {}); }
@@ -153,13 +173,47 @@
     });
   });
 
+  // ---- scroll scenes: everything below is driven by scroll position, transform/opacity only
+  var scenes = $$("[data-scene]"), seqs = $$("[data-seq]"), frieze = $(".frieze");
+  function clamp(x) { return x < 0 ? 0 : x > 1 ? 1 : x; }
+  function scenesFrame() {
+    var vh = innerHeight;
+    // demo video grows into the frame while its scene pins
+    scenes.forEach(function (s) {
+      var r = s.getBoundingClientRect(), d = vh - r.top;
+      var p = clamp((d - vh * 0.4) / (vh * 1.1));
+      p = p * p * (3 - 2 * p);
+      s.style.setProperty("--p", p.toFixed(4));
+      var demo = $(".demo", s); if (demo) demo.style.setProperty("--p", p.toFixed(4));
+    });
+    // headline and lede words appear one by one
+    scrubs.forEach(function (o) {
+      var r = o.el.getBoundingClientRect(), n = o.words.length;
+      var q = clamp((vh * 0.92 - r.top) / (vh * 0.46));
+      o.words.forEach(function (w, i) {
+        w.style.opacity = (0.16 + 0.84 * clamp(q * (n + 3) - i)).toFixed(3);
+      });
+    });
+    // process steps light up in order
+    seqs.forEach(function (ol) {
+      $$("li", ol).forEach(function (li) {
+        li.classList.toggle("lit", li.getBoundingClientRect().top < vh * 0.78);
+      });
+    });
+    // hero phones drift at different speeds
+    if (frieze) frieze.style.setProperty("--hp", clamp(scrollY / (vh * 0.9)).toFixed(4));
+  }
+
   // ---- scroll progress bar
   var prog = $("#prog"), ticking = false;
   function onScroll() {
     ticking = false;
     var h = root.scrollHeight - innerHeight;
     prog.style.transform = "scaleX(" + (h > 0 ? Math.min(scrollY / h, 1) : 0) + ")";
+    scenesFrame();
   }
+  addEventListener("resize", function () { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } });
+  addEventListener("load", onScroll);
   addEventListener("scroll", function () { if (!ticking) { ticking = true; requestAnimationFrame(onScroll); } }, { passive: true });
   onScroll();
 })();

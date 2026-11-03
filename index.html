@@ -1,18 +1,19 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="tr">
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>aslında… stüdyo | Konudan hazır Reels videosu</title>
 <meta name="description" content="Konuyu yaz, Türkçe seslendirmeli, altyazılı, gerçek görselli Reels videon dakikalar içinde bilgisayarında hazır. Windows için masaüstü stüdyo.">
-<meta name="theme-color" content="#0a0e1c">
-<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Cdefs%3E%3ClinearGradient id='g' x1='0' x2='1'%3E%3Cstop offset='0' stop-color='%235d6bff'/%3E%3Cstop offset='.5' stop-color='%23b45cff'/%3E%3Cstop offset='1' stop-color='%23ff4f6d'/%3E%3C/linearGradient%3E%3C/defs%3E%3Crect width='32' height='32' rx='8' fill='%230a0e1c'/%3E%3Ctext x='16' y='23' font-family='Arial' font-weight='800' font-size='20' text-anchor='middle' fill='url(%23g)'%3Ea%3C/text%3E%3C/svg%3E">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;800&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#07080d">
+<link rel="icon" type="image/svg+xml" href="medya/marka/ikon.svg"><link rel="apple-touch-icon" href="medya/marka/ikon.png">
+
+<link rel="stylesheet" href="font/font.css">
+
 <link rel="stylesheet" href="stil.css">
 </head>
 <body>
+<div class="loader" aria-hidden="true"><div class="loader-in"><img src="medya/marka/ikon.svg" alt="" width="96" height="96"><span class="loader-bar"></span></div></div><script src="gecis.js"></script>
 <svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false">
   <defs>
     <symbol id="tl" viewBox="0 0 10 14"><path d="M3.4 1.2V9.6Q3.4 12.8 8.6 12.8M1 6.4 8.4 4M1 9 8.4 6.6" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></symbol>
@@ -22,7 +23,7 @@
 
 <header class="top">
   <div class="wrap">
-    <a class="logo" href="#top"><i aria-hidden="true">a</i>aslında… stüdyo</a>
+    <a class="logo" href="#top"><img src="medya/marka/logo.png" alt="aslında… stüdyo" width="1241" height="446"></a>
     <nav class="main" aria-label="Ana menü">
       <a href="#program">Program</a><a href="#tarzlar">Tarzlar</a><a href="#ozellikler">Özellikler</a><a href="#fiyat">Fiyatlar</a><a href="#sss">SSS</a>
     </nav>
@@ -59,9 +60,16 @@
 <section id="program" class="sec" aria-labelledby="h-prog">
   <div class="wrap">
     <div class="shead">
-      <h2 id="h-prog" class="rv">Konudan videoya, tek pencerede</h2>
-      <p class="lede rv" style="--d:.1s">Bunlar programın gerçek ekranları. Konuyu yazarsın, tarzı seçersin; geri kalanını program yapar.</p>
+      <h2 id="h-prog" data-scrub>Konudan videoya, tek pencerede</h2>
+      <p class="lede" data-scrub>Bunlar programın gerçek ekranları. Konuyu yazarsın, tarzı seçersin; geri kalanını program yapar.</p>
     </div>
+  </div>
+  <div class="scene" data-scene><div class="scene-in">
+    <figure class="demo" aria-label="Konuyu yazıp videonun hazırlanmasını gösteren kısa tanıtım">
+      <video muted loop playsinline preload="metadata" poster="medya/demo.jpg" width="1280" height="720" data-autoplay aria-label="Tanıtım videosu: konuyu yaz, Video oluştur'a bas, videon hazır"><source src="medya/demo.mp4" type="video/mp4"></video>
+    </figure>
+  </div></div>
+  <div class="wrap">
     <figure class="win big rv">
       <div class="bar" aria-hidden="true"><span></span><span></span><span></span><em>aslında… stüdyo · Reels</em></div>
       <a class="shot" href="medya/arayuz-reels.jpg" target="_blank" rel="noopener"><img src="medya/arayuz-reels.jpg" width="1366" height="1000" alt="Programın Reels sayfası: video stili, prompt, konu, açılış başlığı ve anlatım metni alanları"></a>
@@ -93,7 +101,7 @@
         <button role="tab" aria-controls="stage" tabindex="-1" aria-selected="false" data-k="cizim"><i class="th" style="background-image:url(medya/cizim.jpg)"></i><b>Çizim</b><span class="d">Çizgi karakterler, el, eşya ve etiketlerle anlatım. Soyut konuyu çizerek açıklar.</span></button>
         <button role="tab" aria-controls="stage" tabindex="-1" aria-selected="false" data-k="karma"><i class="th" style="background-image:url(medya/karma.jpg)"></i><b>Karma</b><span class="d">Hızlı, tasarruflu şablon sahneler. Ücretsiz planın tek stilidir.</span></button>
         <button role="tab" aria-controls="stage" tabindex="-1" aria-selected="false" data-k="motion"><i class="th" style="background-image:url(medya/motion.jpg)"></i><b>Motion</b><span class="d">Sinematik 3D kamera, kinetik yazı ve efektler. Claude anahtarınla çalışır.</span></button>
-        <button role="tab" aria-controls="stage" tabindex="-1" aria-selected="false" data-k="arayuz"><i class="th blank" aria-hidden="true">?</i><b>Arayüz</b><span class="d">Telefon ekranı kartları ve kelime kelime altyazı. Videon varsa arkada oynar.</span></button>
+        <button role="tab" aria-controls="stage" tabindex="-1" aria-selected="false" data-k="arayuz"><i class="th" style="background-image:url(medya/arayuz.jpg)"></i><b>Arayüz</b><span class="d">Telefon ekranı kartları ve kelime kelime altyazı. Videon varsa arkada oynar.</span></button>
       </div>
       <div class="stage">
         <div id="stage"></div>
@@ -110,12 +118,12 @@
       <h2 id="h-surec" class="rv">Konudan videoya, beş adımda</h2>
       <p class="lede rv" style="--d:.1s">Hepsini program yapar; sen önizlemede bakar, beğenmediğin sahneyi düzeltirsin.</p>
     </div>
-    <ol class="steps">
-      <li class="rv" style="--d:0s"><span class="nb">1</span><div><h3>Konuyu yaz</h3><p>Konuyu ya da hazır metnini yazarsın.</p></div></li>
-      <li class="rv" style="--d:.08s"><span class="nb">2</span><div><h3>Metin ve ses</h3><p>Program metni yazar ve seslendirir. Ücretsiz yerel ses de olur.</p></div></li>
-      <li class="rv" style="--d:.16s"><span class="nb">3</span><div><h3>Sahneler</h3><p>Sahnelere böler; altyazı sesten otomatik zamanlanır.</p></div></li>
-      <li class="rv" style="--d:.24s"><span class="nb">4</span><div><h3>Görseller</h3><p>Görselleri bulur. Belgeselde Wikimedia Commons'tan gelir, atıfı hazır yazılır.</p></div></li>
-      <li class="rv" style="--d:.32s"><span class="nb">5</span><div><h3>Video çıkar</h3><p>Videoyu çıkarır. Önizlemede bir sahneyi beğenmezsen o sahneyi düzeltirsin.</p></div></li>
+    <ol class="steps" data-seq>
+      <li><span class="nb">1</span><div><h3>Konuyu yaz</h3><p>Konuyu ya da hazır metnini yazarsın.</p></div></li>
+      <li><span class="nb">2</span><div><h3>Metin ve ses</h3><p>Program metni yazar ve seslendirir. Ücretsiz yerel ses de olur.</p></div></li>
+      <li><span class="nb">3</span><div><h3>Sahneler</h3><p>Sahnelere böler; altyazı sesten otomatik zamanlanır.</p></div></li>
+      <li><span class="nb">4</span><div><h3>Görseller</h3><p>Görselleri bulur. Belgeselde Wikimedia Commons'tan gelir, atıfı hazır yazılır.</p></div></li>
+      <li><span class="nb">5</span><div><h3>Video çıkar</h3><p>Videoyu çıkarır. Önizlemede bir sahneyi beğenmezsen o sahneyi düzeltirsin.</p></div></li>
     </ol>
   </div>
 </section>
@@ -131,7 +139,7 @@
     <article class="lead-f rv">
       <div class="lf-copy">
         <h3>Konudan videoya</h3>
-        <p>Konuyu ya da hazır metnini yaz. Program metni yazar, seslendirir, sahnelere böler, görselleri bulur ve videoyu çıkarır. Önizlemede bir sahneyi beğenmezsen o sahneyi düzeltirsin.</p>
+        <p data-scrub>Konuyu ya da hazır metnini yaz. Program metni yazar, seslendirir, sahnelere böler, görselleri bulur ve videoyu çıkarır. Önizlemede bir sahneyi beğenmezsen o sahneyi düzeltirsin.</p>
       </div>
       <div class="lf-art" aria-hidden="true"><div class="ring r1"></div><div class="ring r2"></div><div class="ring r3"></div><i class="dot d1"></i><i class="dot d2"></i><i class="dot d3"></i><div class="core"><svg viewBox="0 0 24 24"><path d="M8 5.5v13l11-6.5z"/></svg></div></div>
     </article>
@@ -257,9 +265,8 @@
         <p class="lede">Satın alma, lisans kodu ve destek için yaz.</p>
       </div>
       <div class="contact">
-        <!-- TODO (sahip): gerçek e-posta ve (varsa) WhatsApp numarasını yaz. -->
-        <div><b>E-posta</b><a href="mailto:{{EPOSTA}}">{{EPOSTA}}</a></div>
-        <div><b>WhatsApp</b><span>numara eklenecek</span></div>
+        <!-- TODO (sahip): destek e-postası açılınca buraya ekle. -->
+        <div><b>WhatsApp</b><a href="https://wa.me/905417236026" target="_blank" rel="noopener">+90 541 723 60 26</a></div>
       </div>
     </div>
   </div>
@@ -271,7 +278,7 @@
   <div class="wrap">
     <div class="fcols">
       <div class="fbrand">
-        <a class="logo" href="#top"><i aria-hidden="true">a</i>aslında… stüdyo</a>
+        <a class="logo" href="#top"><img src="medya/marka/logo.png" alt="aslında… stüdyo" width="1241" height="446"></a>
         <p>Konudan hazır Reels videosu. Windows için masaüstü stüdyo.</p>
       </div>
       <nav aria-label="Ürün"><h4>Ürün</h4><a href="#program">Program</a><a href="#tarzlar">Tarzlar</a><a href="#ozellikler">Özellikler</a><a href="#fiyat">Fiyatlar</a></nav>
@@ -281,6 +288,7 @@
     <p class="legal-line">© aslında… stüdyo. Sahibi: Alperen. Wikimedia Commons görselleri kendi lisanslarıyla kullanılır.</p>
   </div>
 </footer>
+<a class="wa" href="https://wa.me/905417236026" target="_blank" rel="noopener" aria-label="WhatsApp ile yaz"><svg viewBox="0 0 24 24" width="26" height="26" aria-hidden="true"><path fill="currentColor" d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm0 18.2a8.2 8.2 0 0 1-4.2-1.1l-.3-.2-3 .8.8-2.9-.2-.3A8.2 8.2 0 1 1 12 20.2Zm4.5-6.1c-.2-.1-1.5-.7-1.7-.8-.2-.1-.4-.1-.6.1l-.8 1c-.1.2-.3.2-.5.1a6.7 6.7 0 0 1-3.3-2.9c-.3-.4.2-.4.7-1.3.1-.2 0-.3 0-.4l-.8-1.8c-.2-.5-.4-.4-.6-.4h-.5a1 1 0 0 0-.7.3 3 3 0 0 0-.9 2.2 5.2 5.2 0 0 0 1.1 2.7 11.8 11.8 0 0 0 4.5 4c1.7.7 2.3.8 3.2.6a2.7 2.7 0 0 0 1.8-1.2 2.2 2.2 0 0 0 .1-1.3c0-.1-.2-.2-.4-.3Z"/></svg><span>Bize yaz</span></a>
 <script src="app.js"></script>
 </body>
 </html>
